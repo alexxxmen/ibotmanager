@@ -667,7 +667,13 @@ class InstaBot:
     def check_exisiting_comment(self, media_code):
         url_check = self.url_media_detail % (media_code)
         check_comment = self.s.get(url_check)
-        all_data = json.loads(check_comment.text)
+        try:
+            all_data = json.loads(check_comment.text)
+        except Exception as ex:
+            self.write_log(ex.message)
+            self.write_log('Error during pars comment data=%s' % check_comment.text)
+            raise
+
         if all_data['graphql']['shortcode_media']['owner']['id'] == self.user_id:
                 self.write_log("Keep calm - It's your own media ;)")
                 # Del media to don't loop on it
